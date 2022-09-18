@@ -1,0 +1,29 @@
+@use '../shared/functions';
+
+// ====================
+// Background
+// ====================
+
+$_backgrounds: (
+	// Core (light background)
+	primary: var(--primaryB),
+	secondary: var(--mono200),
+	tertiary: var(--mono300),
+	// Core (dark background)
+	inversePrimary: var(--primaryA),
+	inverseSecondary: var(--mono900),
+	// Core extension
+	stateDisabled: var(--mono500),
+	accent: var(--accent),
+	lightAccent: var(--accent50),
+	negative: var(--negative),
+	lightNegative: var(--negative50),
+	positive: var(--positive),
+	lightPositive: var(--positive50),
+	warning: var(--warning),
+	lightWarning: var(--warning50)
+);
+
+@function background($key) {
+	@return functions.get-from-map($_backgrounds, $key);
+}

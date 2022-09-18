@@ -1,0 +1,53 @@
+@use '../shared/functions';
+
+// ====================
+// Typography
+// ====================
+
+// KPI
+$_kpi: (
+	xs: 18px,
+	s: 20px,
+	m: 24px,
+	l: 28px,
+	xl: 32px,
+	xxl: 36px
+);
+
+// Heading
+$_heading: (
+	xs: 14px,
+	s: 16px,
+	m: 18px,
+	l: 20px,
+	xl: 24px,
+	xxl: 28px
+);
+
+// Label
+$_label: (
+	xs: 12px,
+	s: 14px,
+	m: 16px,
+	l: 18px
+);
+
+// Paragraph
+$_paragraph: (
+	xxs: 10px,
+	xs: 12px,
+	s: 14px,
+	m: 16px,
+	l: 18px
+);
+
+$_typography: (
+	kpi: $_kpi,
+	heading: $_heading,
+	label: $_label,
+	paragraph: $_paragraph
+);
+
+@function typography($map-key, $key) {
+	@return functions.get-from-map(functions.get-from-map($_typography, $map-key), $key);
+}
