@@ -23,9 +23,9 @@ const chargerSchema = mongoose.Schema(
             ref: 'Location',
         },
     },
-    {
-        timestamps: true,
-    }
+  {
+    timestamps: true,
+  }
 );
 
 const Charger = mongoose.model('Charger', chargerSchema);
