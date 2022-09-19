@@ -18,6 +18,10 @@ const locationSchema = mongoose.Schema(
             type: String,
             trim: true,
         },
+        deleted: {
+            type: Boolean,
+            default: 0,
+        },
         chargers: [
             {
                 type: mongoose.Types.ObjectId,
