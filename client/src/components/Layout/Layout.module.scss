@@ -1,0 +1,32 @@
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+
+  .header {
+    $padding: 30px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 70px;
+    background-color: var(--primaryB);
+    color: var(--primaryA);
+    padding-left: $padding;
+    padding-right: $padding;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+    svg {
+      width: 180px;
+      height: 18px;
+    }
+  }
+
+  .content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
