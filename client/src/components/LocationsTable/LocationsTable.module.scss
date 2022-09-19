@@ -1,0 +1,46 @@
+@import '../../styles/variables';
+
+.container {
+  width: 80%; 
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+
+    p {
+      font-weight: font-weight(bold);
+    }
+  }
+}
+
+
+.table {
+  border-collapse: collapse;
+  color: var(--primaryA);
+
+  .thead {
+    width: 100%;
+    background-color: var(--mono500);
+
+    .theadTr th {
+      padding: 10px;
+    }
+  }
+
+  .tbodyTr {
+    width: 100%;
+
+    td{
+      padding: 10px;
+      text-align: center;
+    }
+
+    &:nth-of-type(even) {
+      background: var(--mono300);
+    }
+  }
+}

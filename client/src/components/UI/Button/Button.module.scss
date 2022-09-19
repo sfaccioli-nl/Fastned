@@ -1,0 +1,35 @@
+@import '../../../styles/variables';
+
+.button {
+  color: var(--primary);
+  font-size: size(m);
+  font-weight: font-weight(regular);
+  text-decoration: none;
+  padding: 10px 18px;
+  border: 1px solid var(--primaryB);
+  animation: fadeIn 1s 1.8s backwards;
+  white-space: nowrap;
+  background: none;
+}
+
+.primary {
+  background-color: var(--primary);
+  color: var(--primaryA);
+
+  &:hover {
+    background:  var(--primaryA);
+    color: var(--primary);
+    cursor: pointer;
+  }
+}
+
+.secondary {
+  background-color: var(--primaryA);
+  color: var(--primary);
+
+  &:hover {
+    background:  var(--primary);
+    color: var(--primaryA);
+    cursor: pointer;
+  }
+}
