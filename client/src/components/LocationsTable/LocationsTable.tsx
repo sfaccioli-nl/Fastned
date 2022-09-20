@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { getRelativeDate } from '../../utils/getRelativeDate';
 import { ILocation } from '../LocationsView/LocationsView';
 import Button from '../UI/Button/Button';
@@ -15,7 +16,9 @@ export default function LocationsTable(props: ILocationsTableProps): JSX.Element
 		<div className={styles.container}>
 			<div className={styles.header}>
 				<p>Locations</p>
-				<Button className="primary">Add Location</Button>
+				<Link to="/location">
+					<Button className="primary">Add Location</Button>
+				</Link>
 			</div>
 			<table className={styles.table}>
 				<thead className={styles.thead}>
