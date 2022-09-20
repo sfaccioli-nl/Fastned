@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getAllLocations } from '../../services/locationsService';
 import LocationsTable from '../LocationsTable/LocationsTable';
 
 export interface ILocation {
@@ -6,6 +7,7 @@ export interface ILocation {
 	name: string;
 	location: number;
 	chargers: ICharger[];
+	city: string;
 	postalCode: string;
 	updatedAt: string;
 	country: string;
@@ -25,20 +27,10 @@ interface ICharger {
 export default function LocationsView(): JSX.Element {
 	const [locations, setLocations] = useState<ILocation[]>();
 
-	/**
-	 * Fetches locations from DB
-	 */
-	async function getLocations() {
-		try {
-			const data = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/locations`, { method: 'GET' }).then(res => res.json());
-			setLocations(data);
-		} catch (error) {
-			console.log(error);
-		}
-	}
-
 	useEffect(() => {
-		getLocations();
+		getAllLocations()
+			.then(locations => setLocations(locations))
+			.catch(e => console.log(e));
 	}, []);
 
 	return <LocationsTable locations={locations} />;

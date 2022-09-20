@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
+import { createNewLocation, ILocationReqBody } from '../../services/locationsService';
 import Button from '../UI/Button/Button';
 import styles from './LocationForm.module.scss';
 
@@ -20,30 +21,10 @@ export default function LocationForm(): JSX.Element {
 	} = useForm();
 
 	/**
-	 * Puts a location in the DB
-	 */
-	async function addLocation(data: any) {
-		console.log(JSON.stringify(data));
-
-		try {
-			const result = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/locations`, {
-				method: 'POST',
-				body: JSON.stringify(data),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}).then(res => res.json());
-			console.log(result);
-		} catch (error) {
-			console.log(error);
-		}
-	}
-
-	/**
 	 * on submit form
 	 */
 	function onSubmit(data: FieldValues) {
-		addLocation(data);
+		createNewLocation({ ...data } as ILocationReqBody);
 	}
 
 	useEffect(() => {
@@ -54,7 +35,7 @@ export default function LocationForm(): JSX.Element {
 		<form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
 			<div className={styles.nameField}>
 				<label htmlFor="name">Name</label>
-				<input id="name" type="text" placeholder="Name" {...register('name', { required: true })} value={location && location.name} />
+				<input id="name" type="text" placeholder="Name" {...register('name', { required: true })} />
 			</div>
 
 			<div className={styles.locationField}>
