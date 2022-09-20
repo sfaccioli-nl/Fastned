@@ -1,4 +1,4 @@
-import LocationsView from '../LocationsView/LocationsView';
+import { Outlet } from 'react-router-dom';
 import styles from './Layout.module.scss';
 
 /**
@@ -35,7 +35,7 @@ export default function Layout(): JSX.Element {
 				</svg>
 			</div>
 			<div className={styles.content}>
-				<LocationsView />
+				<Outlet />
 			</div>
 		</div>
 	);

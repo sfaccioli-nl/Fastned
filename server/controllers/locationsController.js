@@ -1,22 +1,50 @@
 import Location from '../models/Location.js';
 
-const getLocations = async (req,res) => {
+const getLocations = async (req, res) => {
   try {
     const locations = await Location.find();
-    res.json(locations);
+    return res.json(locations);
   } catch (error) {
     console.log(error);
   }
 };
 
-const createLocation = async (req,res) => {
+const createLocation = async (req, res) => {
   try {
     const location = new Location(req.body);
     const storedLocation = await location.save();
-    res.json(storedLocation);
+    return res.json(storedLocation);
   } catch (error) {
     console.log(error);
   }
 };
 
-export {getLocations, createLocation};
+const updateLocation = async (req, res) => {
+  try {
+    const locationById = await Location.findById(req.params.id);
+    if (!locationById) return res.status(404).send('The location with the given ID was not found.');
+
+    const { name, location, city, postalCode, country } = req.body;
+    console.log(req.body);
+    const locationToUpdate = await Location.findByIdAndUpdate(
+      req.params.id,
+      {
+        name: name || locationById.name,
+        location: location || locationById.location,
+        city: city || locationById.city,
+        postalCode: postalCode || locationById.postalCode,
+        country: country || locationById.country,
+      },
+      {
+        new: true,
+      }
+    );
+
+    const storedLocation = await locationToUpdate.save();
+    return res.json(storedLocation);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { getLocations, createLocation, updateLocation };

@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import bodyParser from 'body-parser';
 import connectDB from './config/db.js';
 import * as dotenv from 'dotenv';
 import locationsRouter from './routes/locationsRoute.js';
@@ -7,6 +8,7 @@ import locationsRouter from './routes/locationsRoute.js';
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json({ type: 'application/*+json' }));
 
 dotenv.config();
 
