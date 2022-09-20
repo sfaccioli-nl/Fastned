@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
 import { createNewLocation, ILocationReqBody, updateLocation } from '../../services/locationsService';
 import { ILocation } from '../LocationsView/LocationsView';
@@ -12,6 +12,7 @@ import styles from './LocationForm.module.scss';
  */
 export default function LocationForm(): JSX.Element {
 	const { id } = useParams();
+	const navigation = useNavigate();
 	const { location, locations, setLocation, setRefreshLocations } = useLocations();
 
 	const { register, handleSubmit, reset } = useForm();
@@ -23,7 +24,10 @@ export default function LocationForm(): JSX.Element {
 		if (id) {
 			updateLocation({ ...data } as ILocationReqBody, id).then(() => setRefreshLocations(true));
 		} else {
-			createNewLocation({ ...data } as ILocationReqBody);
+			createNewLocation({ ...data } as ILocationReqBody).then(() => {
+				setRefreshLocations(true);
+				navigation('/');
+			});
 		}
 	}
 

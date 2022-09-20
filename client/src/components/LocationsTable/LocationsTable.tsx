@@ -3,6 +3,8 @@ import { getRelativeDate } from '../../utils/getRelativeDate';
 import { ILocation } from '../LocationsView/LocationsView';
 import Button from '../UI/Button/Button';
 import styles from './LocationsTable.module.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 interface ILocationsTableProps {
 	locations?: ILocation[];
@@ -17,7 +19,10 @@ export default function LocationsTable(props: ILocationsTableProps): JSX.Element
 			<div className={styles.header}>
 				<p>Locations</p>
 				<Link to="/location">
-					<Button className="primary">Add Location</Button>
+					<Button className="primary">
+						<FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
+						Add Location
+					</Button>
 				</Link>
 			</div>
 			<table className={styles.table}>
