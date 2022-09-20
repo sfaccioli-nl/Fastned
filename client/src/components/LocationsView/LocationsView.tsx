@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
-import { getAllLocations } from '../../services/locationsService';
+import { useLocations } from '../../contexts/LocationsContext/locationsContext';
 import LocationsTable from '../LocationsTable/LocationsTable';
 
 export interface ILocation {
-	_id: number;
+	_id: string;
 	name: string;
 	location: number;
 	chargers: ICharger[];
@@ -14,7 +13,7 @@ export interface ILocation {
 }
 
 interface ICharger {
-	id: number;
+	id: string;
 	type: 'HPC' | 'T52' | 'T53C';
 	serialNumber: string;
 	status: 'CONNECTED' | 'NOT_CONNECTED' | 'REMOVED';
@@ -25,13 +24,7 @@ interface ICharger {
  * Locations list component
  */
 export default function LocationsView(): JSX.Element {
-	const [locations, setLocations] = useState<ILocation[]>();
-
-	useEffect(() => {
-		getAllLocations()
-			.then(locations => setLocations(locations))
-			.catch(e => console.log(e));
-	}, []);
+	const { locations } = useLocations();
 
 	return <LocationsTable locations={locations} />;
 }

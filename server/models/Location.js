@@ -5,18 +5,27 @@ const locationSchema = mongoose.Schema(
         name: {
             type: String,
             trim: true,
+            required: true,
         },
         location: {
             type: Number,
             trim: true,
+            required: true,
+        },
+        city: {
+            type: String,
+            trim: true,
+            required: true,
         },
         postalCode: {
             type: String,
             trim: true,
+            required: true,
         },
         country: {
             type: String,
             trim: true,
+            required: true,
         },
         deleted: {
             type: Boolean,
