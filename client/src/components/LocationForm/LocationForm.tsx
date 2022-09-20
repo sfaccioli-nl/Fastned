@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
+import { useLocation } from 'react-router-dom';
 import Button from '../UI/Button/Button';
 import styles from './LocationForm.module.scss';
 
@@ -6,9 +8,13 @@ import styles from './LocationForm.module.scss';
  * Component to add and edit a location
  */
 export default function LocationForm(): JSX.Element {
+	const locationState = useLocation();
+	const location = locationState.state;
+
 	const {
 		register,
 		handleSubmit,
+		reset,
 		watch,
 		formState: { errors }
 	} = useForm();
@@ -40,11 +46,15 @@ export default function LocationForm(): JSX.Element {
 		addLocation(data);
 	}
 
+	useEffect(() => {
+		reset({ ...location });
+	}, [location, reset]);
+
 	return (
 		<form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
 			<div className={styles.nameField}>
 				<label htmlFor="name">Name</label>
-				<input id="name" type="text" placeholder="Name" {...register('name', { required: true })} />
+				<input id="name" type="text" placeholder="Name" {...register('name', { required: true })} value={location && location.name} />
 			</div>
 
 			<div className={styles.locationField}>

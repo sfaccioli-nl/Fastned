@@ -41,7 +41,9 @@ export default function LocationsTable(props: ILocationsTableProps): JSX.Element
 								<td>{location.country}</td>
 								<td>{getRelativeDate(location.updatedAt)}</td>
 								<td>
-									<Button className="secondary">Edit</Button>
+									<Link to={`/location/${location._id}`} state={location}>
+										<Button className="secondary">Edit</Button>
+									</Link>
 								</td>
 							</tr>
 						))}

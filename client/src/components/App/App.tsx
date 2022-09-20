@@ -10,6 +10,7 @@ export default function App() {
 			<Route element={<Layout />}>
 				<Route index element={<LocationsView />} />
 				<Route path="/location" element={<LocationForm />} />
+				<Route path="/location/:id" element={<LocationForm />} />
 			</Route>
 		</Routes>
 	);
