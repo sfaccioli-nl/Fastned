@@ -12,6 +12,18 @@ const LocationsContext = createContext<any | undefined>(undefined);
 function LocationsProvider({ children }: LocationsProviderProps) {
 	const [locations, setLocations] = useState<ILocation[]>();
 	const [location, setLocation] = useState<ILocation>();
+	const [refreshLocations, setRefreshLocations] = useState<boolean>(false);
+
+	useEffect(() => {
+		if (refreshLocations) {
+			getAllLocations()
+				.then(locations => {
+					setLocations(locations);
+					setRefreshLocations(false);
+				})
+				.catch(e => console.log(e));
+		}
+	}, [refreshLocations]);
 
 	useEffect(() => {
 		getAllLocations()
@@ -19,7 +31,7 @@ function LocationsProvider({ children }: LocationsProviderProps) {
 			.catch(e => console.log(e));
 	}, []);
 
-	const value = { locations, location, setLocations, setLocation };
+	const value = { locations, location, setLocations, setLocation, setRefreshLocations };
 
 	return <LocationsContext.Provider value={value}>{children}</LocationsContext.Provider>;
 }

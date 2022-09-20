@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
-import { createNewLocation, ILocationReqBody } from '../../services/locationsService';
+import { createNewLocation, ILocationReqBody, updateLocation } from '../../services/locationsService';
 import { ILocation } from '../LocationsView/LocationsView';
 import Button from '../UI/Button/Button';
 import styles from './LocationForm.module.scss';
@@ -12,7 +12,7 @@ import styles from './LocationForm.module.scss';
  */
 export default function LocationForm(): JSX.Element {
 	const { id } = useParams();
-	const { location, locations, setLocation } = useLocations();
+	const { location, locations, setLocation, setRefreshLocations } = useLocations();
 
 	const { register, handleSubmit, reset } = useForm();
 
@@ -20,14 +20,12 @@ export default function LocationForm(): JSX.Element {
 	 * on submit form
 	 */
 	function onSubmit(data: FieldValues) {
-		createNewLocation({ ...data } as ILocationReqBody);
-	}
-
-	useEffect(() => {
-		if (location) {
-			reset({ ...location });
+		if (id) {
+			updateLocation({ ...data } as ILocationReqBody, id).then(() => setRefreshLocations(true));
+		} else {
+			createNewLocation({ ...data } as ILocationReqBody);
 		}
-	}, [location, reset]);
+	}
 
 	useEffect(() => {
 		if (id && !location && locations) {
@@ -35,9 +33,17 @@ export default function LocationForm(): JSX.Element {
 
 			if (location) {
 				setLocation(location);
+				reset({ ...location });
 			}
 		}
-	}, [id, location, locations, setLocation]);
+	}, [id, location, locations, reset, setLocation]);
+
+	useEffect(() => {
+		return () => {
+			return setLocation(null);
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
@@ -72,7 +78,7 @@ export default function LocationForm(): JSX.Element {
 			</div>
 
 			<Button type="submit" className={'primary'}>
-				Save Location
+				{id ? 'Update Location' : 'Save Location'}
 			</Button>
 		</form>
 	);
