@@ -10,9 +10,4 @@ locationsRouter.post('/', createLocation);
 locationsRouter.patch('/:id', updateLocation);
 
 
-
-locationsRouter.put('/', (req,res) => {
-  res.send('desde put api/locations')
-});
-
 export default locationsRouter;
