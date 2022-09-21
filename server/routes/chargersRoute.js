@@ -1,9 +1,11 @@
 import express from 'express';
-import { getChargers, createCharger, updateCharger } from '../controllers/chargersController.js';
+import { getChargers, getChargerById, createCharger, updateCharger } from '../controllers/chargersController.js';
 
 const chargersRouter = express.Router();
 
 chargersRouter.get('/', getChargers);
+
+chargersRouter.get('/:id', getChargerById);
 
 chargersRouter.post('/', createCharger);
 

@@ -9,6 +9,17 @@ const getLocations = async (req, res) => {
   }
 };
 
+const getLocationById = async (req, res) => {
+  try {
+    const locationById = await Location.findById(req.params.id).populate('chargers');
+    if (!locationById) return res.status(404).send('The location with the given ID was not found.');
+
+    return res.json(locationById);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const createLocation = async (req, res) => {
   try {
     const location = new Location(req.body);
@@ -25,7 +36,6 @@ const updateLocation = async (req, res) => {
     if (!locationById) return res.status(404).send('The location with the given ID was not found.');
 
     const { name, location, city, postalCode, country } = req.body;
-    console.log(req.body);
     const locationToUpdate = await Location.findByIdAndUpdate(
       req.params.id,
       {
@@ -47,4 +57,4 @@ const updateLocation = async (req, res) => {
   }
 };
 
-export { getLocations, createLocation, updateLocation };
+export { getLocations, getLocationById, createLocation, updateLocation };
