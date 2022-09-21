@@ -1,13 +1,11 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
-import { createNewLocation, ILocationReqBody, updateLocation } from '../../services/locationsService';
-import { ChargerForm } from '../ChargerForm/ChargerForm';
-import { ILocation } from '../LocationsView/LocationsView';
-import Popup from '../Popup/Popup';
+import { createNewLocation, getLocationById, ILocationReqBody, updateLocation } from '../../services/locationsService';
+import ChargersTable from '../ChargersTable/ChargersTable';
 import Button from '../UI/Button/Button';
 import styles from './LocationForm.module.scss';
 
@@ -15,11 +13,9 @@ import styles from './LocationForm.module.scss';
  * Component to add and edit a location
  */
 export default function LocationForm(): JSX.Element {
-	const [openPopup, setOpenPopup] = useState<boolean>(false);
-
 	const { id } = useParams();
 	const navigation = useNavigate();
-	const { location, locations, setLocation, setRefreshLocations } = useLocations();
+	const { location, setLocation, setRefreshLocations } = useLocations();
 
 	const { register, handleSubmit, reset } = useForm();
 
@@ -38,15 +34,13 @@ export default function LocationForm(): JSX.Element {
 	}
 
 	useEffect(() => {
-		if (id && !location && locations) {
-			const location = locations.find((loc: ILocation) => loc._id === id);
-
-			if (location) {
-				setLocation(location);
-				reset({ ...location });
-			}
+		if (id && !location) {
+			getLocationById(id).then(response => {
+				setLocation(response);
+				reset({ ...response });
+			});
 		}
-	}, [id, location, locations, reset, setLocation]);
+	}, [id, location, reset, setLocation]);
 
 	useEffect(() => {
 		return () => {
@@ -58,6 +52,11 @@ export default function LocationForm(): JSX.Element {
 	return (
 		<div className={styles.container}>
 			<form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+				<Button type="submit" className={'primary'} onClick={onSubmit}>
+					<FontAwesomeIcon icon={faFloppyDisk} />
+					{id ? 'Update Location' : 'Save Location'}
+				</Button>
+
 				<div className={styles.nameField}>
 					<label htmlFor="name">Name</label>
 					<input id="name" type="text" placeholder="Name" {...register('name', { required: true })} />
@@ -87,20 +86,9 @@ export default function LocationForm(): JSX.Element {
 						<option value="DEU">Germany</option>
 					</select>
 				</div>
-
-				<Button type="submit" className={'primary'}>
-					{id ? 'Update Location' : 'Save Location'}
-				</Button>
 			</form>
 
-			<div>
-				<Button className="primary" onClick={() => setOpenPopup(true)}>
-					<FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
-					Add Charger
-				</Button>
-			</div>
-
-			<Popup visible={openPopup} setVisible={setOpenPopup} title="Add Charger" content={<ChargerForm />} />
+			{location && <ChargersTable chargers={location.chargers} />}
 		</div>
 	);
 }

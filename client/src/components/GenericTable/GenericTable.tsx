@@ -19,14 +19,21 @@ export default function GenericTable<T extends Object>(props: IGenericTableProps
 				</tr>
 			</thead>
 			<tbody>
-				{props.data &&
+				{props.data && props.data.length > 0 ? (
 					props.data.map((row, rowIdx) => (
 						<tr key={rowIdx} className={styles.tbodyTr}>
 							{Object.values(row).map((detail, detailIdx) => (
 								<td key={detailIdx}>{detail}</td>
 							))}
 						</tr>
-					))}
+					))
+				) : (
+					<tr className={styles.tbodyTr}>
+						<td className={styles.noData} colSpan={props.tableHeadTitles.length}>
+							No data to display
+						</td>
+					</tr>
+				)}
 			</tbody>
 		</table>
 	);

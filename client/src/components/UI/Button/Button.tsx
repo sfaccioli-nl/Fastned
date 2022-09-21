@@ -4,7 +4,7 @@ import styles from './Button.module.scss';
 interface IButton extends PropsWithChildren {
 	className: 'primary' | 'secondary';
 	type?: 'button' | 'submit' | 'reset' | undefined;
-	onClick?: () => void;
+	onClick?: (data?: any) => void;
 }
 
 /**

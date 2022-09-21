@@ -7,7 +7,8 @@ interface IPopup {
 	visible: boolean;
 	setVisible: (arg: boolean) => void;
 	title: string;
-	content: any;
+	content: JSX.Element;
+	submitRef: any;
 	onSave?: () => void;
 }
 
@@ -26,7 +27,9 @@ export default function Popup(props: IPopup): JSX.Element {
 						</div>
 						<div className={styles.content}>{props.content}</div>
 						<div className={styles.actions}>
-							<Button className="primary">Save</Button>
+							<Button className="primary" onClick={() => props.submitRef.current.click()}>
+								Save
+							</Button>
 							<Button className="secondary" onClick={() => props.setVisible(false)}>
 								Cancel
 							</Button>

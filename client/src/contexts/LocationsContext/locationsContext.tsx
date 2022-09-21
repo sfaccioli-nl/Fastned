@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { ILocation } from '../../components/LocationsView/LocationsView';
-import { getAllLocations } from '../../services/locationsService';
+import { getAllLocations, getLocationById } from '../../services/locationsService';
 
 type LocationsProviderProps = { children: React.ReactNode };
 
@@ -13,6 +13,7 @@ function LocationsProvider({ children }: LocationsProviderProps) {
 	const [locations, setLocations] = useState<ILocation[]>();
 	const [location, setLocation] = useState<ILocation>();
 	const [refreshLocations, setRefreshLocations] = useState<boolean>(false);
+	const [refreshLocation, setRefreshLocation] = useState<string | undefined>();
 
 	useEffect(() => {
 		if (refreshLocations) {
@@ -26,12 +27,23 @@ function LocationsProvider({ children }: LocationsProviderProps) {
 	}, [refreshLocations]);
 
 	useEffect(() => {
+		if (refreshLocation) {
+			getLocationById(refreshLocation)
+				.then(location => {
+					setLocation(location);
+					setRefreshLocation(undefined);
+				})
+				.catch(e => console.log(e));
+		}
+	}, [refreshLocation]);
+
+	useEffect(() => {
 		getAllLocations()
 			.then(locations => setLocations(locations))
 			.catch(e => console.log(e));
 	}, []);
 
-	const value = { locations, location, setLocations, setLocation, setRefreshLocations };
+	const value = { locations, location, setRefreshLocation, setLocations, setLocation, setRefreshLocations };
 
 	return <LocationsContext.Provider value={value}>{children}</LocationsContext.Provider>;
 }

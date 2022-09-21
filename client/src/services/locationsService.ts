@@ -20,8 +20,8 @@ export async function getAllLocations(): Promise<ILocation[]> {
 /**
  * Get location by id
  */
-export async function getLocationById(id: string): Promise<ILocation[]> {
-	return await getRequest<ILocation[]>(`/api/locations/${id}`).then(response => response);
+export async function getLocationById(id: string): Promise<ILocation> {
+	return await getRequest<ILocation>(`/api/locations/${id}`).then(response => response);
 }
 
 /**
