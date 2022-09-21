@@ -1,33 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
 import { createNewCharger, getChargerById, IChargerReqBody, updateCharger } from '../../services/chargersService';
-import { ICharger } from '../ChargersTable/ChargersTable';
 import styles from './ChargerForm.module.scss';
 
 interface IChargerForm {
 	submitRef: any;
 	chargerId?: string;
+	setOpenPopup: (s: boolean) => void;
 }
 
 /**
  * Component to add or edit a charger
  */
 export function ChargerForm(props: IChargerForm): JSX.Element {
-	const [charger, setCharger] = useState<ICharger>();
 	const { register, handleSubmit, reset } = useForm();
-	const { location, setRefreshLocation } = useLocations();
+	const { location, setChargers, chargers } = useLocations();
 
 	/**
 	 * on submit form
 	 */
 	function onSubmit(data: FieldValues) {
-		if (charger) {
-			updateCharger({ ...data, location: charger.location } as IChargerReqBody, charger._id).then(() => setRefreshLocation(location._id));
+		if (props.chargerId) {
+			updateCharger({ ...data } as IChargerReqBody, props.chargerId).then(response => {
+				setChargers([...chargers, { ...response }]);
+				props.setOpenPopup(false);
+			});
 		} else {
-			createNewCharger({ ...data, location: location._id } as IChargerReqBody).then(() => {
-				setRefreshLocation(location._id);
-				console.log('creation');
+			createNewCharger({ ...data, location: location?._id } as IChargerReqBody).then(response => {
+				setChargers([...chargers, response]);
+				props.setOpenPopup(false);
 			});
 		}
 	}
@@ -35,7 +37,6 @@ export function ChargerForm(props: IChargerForm): JSX.Element {
 	useEffect(() => {
 		if (props.chargerId) {
 			getChargerById(props.chargerId).then(response => {
-				setCharger(response);
 				reset({ ...response });
 			});
 		}

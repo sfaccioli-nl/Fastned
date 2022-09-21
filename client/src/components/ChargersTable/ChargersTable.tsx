@@ -1,6 +1,7 @@
 import { faPenToSquare, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
+import { useLocations } from '../../contexts/LocationsContext/locationsContext';
 import { getRelativeDate } from '../../utils/getRelativeDate';
 import { ChargerForm } from '../ChargerForm/ChargerForm';
 import GenericTable from '../GenericTable/GenericTable';
@@ -17,10 +18,6 @@ export interface ICharger {
 	location: string;
 }
 
-interface IChargersTableProps {
-	chargers: ICharger[];
-}
-
 interface IChargersTableValue {
 	id: string;
 	type: string;
@@ -33,14 +30,15 @@ interface IChargersTableValue {
 /**
  * Chargers table component
  */
-export default function ChargersTable(props: IChargersTableProps): JSX.Element {
+export default function ChargersTable(): JSX.Element {
 	const [openPopup, setOpenPopup] = useState<boolean>(false);
 	const [chargerId, setChargerId] = useState<string | undefined>();
 	const submitRef = useRef();
+	const { chargers } = useLocations();
 
 	const tableTitles = ['Id', 'Type ', 'Serial Number', 'Status', 'Last Updated', 'Actions'];
 
-	const chargersTableData: IChargersTableValue[] | undefined = props.chargers.map(charger => ({
+	const chargersTableData: IChargersTableValue[] | undefined = chargers.map((charger: ICharger) => ({
 		id: charger._id,
 		type: charger.type,
 		serialNumber: charger.serialNumber,
@@ -84,7 +82,7 @@ export default function ChargersTable(props: IChargersTableProps): JSX.Element {
 				setVisible={setOpenPopup}
 				title="Add Charger"
 				submitRef={submitRef}
-				content={<ChargerForm chargerId={chargerId} submitRef={submitRef} />}
+				content={<ChargerForm chargerId={chargerId} submitRef={submitRef} setOpenPopup={setOpenPopup} />}
 			/>
 		</div>
 	);

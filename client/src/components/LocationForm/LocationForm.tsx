@@ -5,7 +5,7 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
 import { createNewLocation, getLocationById, ILocationReqBody, updateLocation } from '../../services/locationsService';
-import ChargersTable from '../ChargersTable/ChargersTable';
+import ChargersTable, { ICharger } from '../ChargersTable/ChargersTable';
 import Button from '../UI/Button/Button';
 import styles from './LocationForm.module.scss';
 
@@ -15,7 +15,7 @@ import styles from './LocationForm.module.scss';
 export default function LocationForm(): JSX.Element {
 	const { id } = useParams();
 	const navigation = useNavigate();
-	const { location, setLocation, setRefreshLocations } = useLocations();
+	const { location, setLocation, setChargers, setRefreshLocations } = useLocations();
 
 	const { register, handleSubmit, reset } = useForm();
 
@@ -37,10 +37,11 @@ export default function LocationForm(): JSX.Element {
 		if (id && !location) {
 			getLocationById(id).then(response => {
 				setLocation(response);
+				setChargers(response.chargers as ICharger[]);
 				reset({ ...response });
 			});
 		}
-	}, [id, location, reset, setLocation]);
+	}, [id, location, reset, setChargers, setLocation]);
 
 	useEffect(() => {
 		return () => {
@@ -88,7 +89,7 @@ export default function LocationForm(): JSX.Element {
 				</div>
 			</form>
 
-			{location && <ChargersTable chargers={location.chargers} />}
+			{location && <ChargersTable />}
 		</div>
 	);
 }
