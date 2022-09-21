@@ -1,0 +1,49 @@
+@import '../../styles/variables';
+
+input,
+select,
+.btn {
+	padding: 10px;
+	border-radius: 4px;
+}
+
+input,
+select {
+	font-family: var(--primary-font);
+	border: 1px solid rgba(var(--secondary-color, 0.05));
+}
+
+svg {
+  margin-right: 5px;
+}
+
+.form {
+  label,
+	input, 
+  select {
+		display: block;
+	}
+
+  label {
+    font-weight: font-weight(semi-bold);
+  }
+
+  display: flex;
+  margin-bottom: 30px;
+  margin-top: 30px;
+
+  input, select {
+    background-color: var(--mono300);
+    color: var(--primaryA);
+    font-family: var(--primary-font);
+    border: 1px solid rgba(var(--secondary-color, 0.05));
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+  }
+
+  div {
+    margin-right: 15px;
+  }
+}
