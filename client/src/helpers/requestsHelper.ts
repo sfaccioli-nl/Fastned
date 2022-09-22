@@ -30,3 +30,15 @@ export async function patchRequest<B, R>(endpoint: string, body: B): Promise<R> 
 		}
 	}).then(res => res.json());
 }
+
+/**
+ * Generic function to delete data from DB
+ */
+export async function deleteRequest<R>(endpoint: string): Promise<R> {
+	return await fetch(`${process.env.REACT_APP_SERVER_URL}${endpoint}`, {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	}).then(res => res.json());
+}

@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { ICharger } from '../../components/ChargersTable/ChargersTable';
 import { ILocation } from '../../components/LocationsView/LocationsView';
 import { getAllLocations } from '../../services/locationsService';
+import { sortByDateDesc } from '../../utils/sortByDate';
 
 type LocationsProviderProps = { children: React.ReactNode };
 
@@ -12,26 +14,17 @@ const LocationsContext = createContext<any | undefined>(undefined);
 function LocationsProvider({ children }: LocationsProviderProps) {
 	const [locations, setLocations] = useState<ILocation[]>();
 	const [location, setLocation] = useState<ILocation>();
-	const [refreshLocations, setRefreshLocations] = useState<boolean>(false);
-
-	useEffect(() => {
-		if (refreshLocations) {
-			getAllLocations()
-				.then(locations => {
-					setLocations(locations);
-					setRefreshLocations(false);
-				})
-				.catch(e => console.log(e));
-		}
-	}, [refreshLocations]);
+	const [chargers, setChargers] = useState<ICharger[]>();
 
 	useEffect(() => {
 		getAllLocations()
-			.then(locations => setLocations(locations))
+			.then(locations => {
+				setLocations(sortByDateDesc<ILocation>(locations));
+			})
 			.catch(e => console.log(e));
 	}, []);
 
-	const value = { locations, location, setLocations, setLocation, setRefreshLocations };
+	const value = { locations, location, chargers, setChargers, setLocations, setLocation };
 
 	return <LocationsContext.Provider value={value}>{children}</LocationsContext.Provider>;
 }

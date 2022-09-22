@@ -22,6 +22,10 @@ const chargerSchema = mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'Location',
         },
+        deleted: {
+            type: Boolean,
+            default: 0,
+        },
     },
   {
     timestamps: true,

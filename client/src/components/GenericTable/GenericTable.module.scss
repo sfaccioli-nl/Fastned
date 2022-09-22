@@ -1,0 +1,33 @@
+@import '../../styles/variables';
+@import '../../styles/theme';
+
+.table {
+  border-collapse: collapse;
+  color: var(--primaryA);
+
+  .thead {
+    width: 100%;
+    background-color: var(--mono500);
+
+    .theadTr th {
+      padding: 10px;
+    }
+  }
+
+  .tbodyTr {
+    width: 100%;
+
+    td{
+      padding: 10px;
+      text-align: center;
+    }
+
+    .noData {
+      font-size: typography(label, l);
+    }
+
+    &:nth-of-type(even) {
+      background: var(--mono300);
+    }
+  }
+}
