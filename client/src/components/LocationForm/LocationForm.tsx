@@ -5,6 +5,7 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
 import { createNewLocation, getLocationById, ILocationReqBody, updateLocation } from '../../services/locationsService';
+import { sortByDateDesc } from '../../utils/sortByDate';
 import ChargersTable, { ICharger } from '../ChargersTable/ChargersTable';
 import Button from '../UI/Button/Button';
 import styles from './LocationForm.module.scss';
@@ -15,7 +16,7 @@ import styles from './LocationForm.module.scss';
 export default function LocationForm(): JSX.Element {
 	const { id } = useParams();
 	const navigation = useNavigate();
-	const { location, setLocation, setChargers, setRefreshLocations } = useLocations();
+	const { location, locations, setLocation, setChargers, chargers, setLocations, setRefreshLocations } = useLocations();
 
 	const { register, handleSubmit, reset } = useForm();
 
@@ -23,11 +24,22 @@ export default function LocationForm(): JSX.Element {
 	 * on submit form
 	 */
 	function onSubmit(data: FieldValues) {
+		const newLoc: ILocationReqBody = {
+			name: data.name,
+			location: data.location,
+			city: data.city,
+			postalCode: data.postalCode,
+			country: data.country,
+			chargers: chargers?.map((c: ICharger) => c._id)
+		};
 		if (id) {
-			updateLocation({ ...data } as ILocationReqBody, id).then(() => setRefreshLocations(true));
+			updateLocation(newLoc, id).then(response => {
+				setLocation(response);
+				setChargers(response.chargers as ICharger[]);
+			});
 		} else {
-			createNewLocation({ ...data } as ILocationReqBody).then(() => {
-				setRefreshLocations(true);
+			createNewLocation(newLoc).then(response => {
+				setLocations(sortByDateDesc([...locations, response]));
 				navigation('/');
 			});
 		}
@@ -45,7 +57,8 @@ export default function LocationForm(): JSX.Element {
 
 	useEffect(() => {
 		return () => {
-			return setLocation(null);
+			setLocation(undefined);
+			setChargers(undefined);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -89,7 +102,7 @@ export default function LocationForm(): JSX.Element {
 				</div>
 			</form>
 
-			{location && <ChargersTable />}
+			<ChargersTable />
 		</div>
 	);
 }

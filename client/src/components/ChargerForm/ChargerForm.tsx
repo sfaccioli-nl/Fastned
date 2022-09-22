@@ -23,12 +23,12 @@ export function ChargerForm(props: IChargerForm): JSX.Element {
 	function onSubmit(data: FieldValues) {
 		if (props.chargerId) {
 			updateCharger({ ...data } as IChargerReqBody, props.chargerId).then(response => {
-				setChargers([...chargers, { ...response }]);
+				setChargers([...(chargers ?? []), { ...response }]);
 				props.setOpenPopup(false);
 			});
 		} else {
 			createNewCharger({ ...data, location: location?._id } as IChargerReqBody).then(response => {
-				setChargers([...chargers, response]);
+				setChargers([...(chargers ?? []), response]);
 				props.setOpenPopup(false);
 			});
 		}

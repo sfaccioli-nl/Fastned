@@ -48,7 +48,7 @@ const updateLocation = async (req, res) => {
       {
         new: true,
       }
-    );
+    ).populate('chargers');
 
     const storedLocation = await locationToUpdate.save();
     return res.json(storedLocation);

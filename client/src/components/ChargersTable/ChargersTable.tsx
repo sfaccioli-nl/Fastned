@@ -38,19 +38,21 @@ export default function ChargersTable(): JSX.Element {
 
 	const tableTitles = ['Id', 'Type ', 'Serial Number', 'Status', 'Last Updated', 'Actions'];
 
-	const chargersTableData: IChargersTableValue[] | undefined = chargers.map((charger: ICharger) => ({
-		id: charger._id,
-		type: charger.type,
-		serialNumber: charger.serialNumber,
-		status: charger.status,
-		updatedAt: getRelativeDate(charger.updatedAt),
-		links: (
-			<div className={styles.actions}>
-				<FontAwesomeIcon className={styles.edit} icon={faPenToSquare} onClick={() => handlesEdit(charger._id)} />
-				<FontAwesomeIcon className={styles.remove} icon={faTrash} onClick={() => handlesEdit(charger._id)} />
-			</div>
-		)
-	}));
+	const chargersTableData: IChargersTableValue[] | undefined =
+		chargers &&
+		chargers.map((charger: ICharger) => ({
+			id: charger._id,
+			type: charger.type,
+			serialNumber: charger.serialNumber,
+			status: charger.status,
+			updatedAt: getRelativeDate(charger.updatedAt),
+			links: (
+				<div className={styles.actions}>
+					<FontAwesomeIcon className={styles.edit} icon={faPenToSquare} onClick={() => handlesEdit(charger._id)} />
+					<FontAwesomeIcon className={styles.remove} icon={faTrash} onClick={() => handlesEdit(charger._id)} />
+				</div>
+			)
+		}));
 
 	/**
 	 * Handles edit button click
