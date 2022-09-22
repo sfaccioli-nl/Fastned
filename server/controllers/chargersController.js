@@ -27,7 +27,7 @@ const createCharger = async (req, res) => {
 
   if (chargerExists) {
     const error = new Error('The charger with the given serial number already exists');
-    return res.status(200).json({ msg: error.message });
+    return res.status(400).json({ msg: error.message });
   }
 
   try {
@@ -93,7 +93,7 @@ const deleteCharger = async (req, res) => {
     }
 
     const locationById = await Location.findById(chargerById.location);
-    console.log(chargerById.location);
+
     if (!locationById) {
       const error = new Error('The location with the given ID was not found');
       return res.status(404).json({ msg: error.message });
