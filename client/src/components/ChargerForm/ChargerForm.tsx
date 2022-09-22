@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
 import { createNewCharger, getChargerById, IChargerReqBody, updateCharger } from '../../services/chargersService';
+import { sortByDateDesc } from '../../utils/sortByDate';
+import { ICharger } from '../ChargersTable/ChargersTable';
 import styles from './ChargerForm.module.scss';
 
 interface IChargerForm {
@@ -23,12 +25,13 @@ export function ChargerForm(props: IChargerForm): JSX.Element {
 	function onSubmit(data: FieldValues) {
 		if (props.chargerId) {
 			updateCharger({ ...data } as IChargerReqBody, props.chargerId).then(response => {
-				setChargers([...(chargers ?? []), { ...response }]);
+				const filteredChargers = chargers.filter((charger: ICharger) => charger._id !== props.chargerId);
+				setChargers(sortByDateDesc([...filteredChargers, response]));
 				props.setOpenPopup(false);
 			});
 		} else {
 			createNewCharger({ ...data, location: location?._id } as IChargerReqBody).then(response => {
-				setChargers([...(chargers ?? []), response]);
+				setChargers(sortByDateDesc([...(chargers ?? []), response]));
 				props.setOpenPopup(false);
 			});
 		}

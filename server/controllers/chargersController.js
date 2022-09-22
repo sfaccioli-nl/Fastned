@@ -22,12 +22,12 @@ const getChargerById = async (req, res) => {
 };
 
 const createCharger = async (req, res) => {
-  const {serialNumber} = req.body;
-  const chargerExists = await Charger.findOne({serialNumber});
+  const { serialNumber } = req.body;
+  const chargerExists = await Charger.findOne({ serialNumber });
 
   if (chargerExists) {
     const error = new Error('The charger with the given serial number already exists');
-      return res.status(200).json({ msg: error.message });
+    return res.status(200).json({ msg: error.message });
   }
 
   try {
@@ -69,7 +69,7 @@ const updateCharger = async (req, res) => {
         type: type || chargerById.type,
         serialNumber: serialNumber || chargerById.serialNumber,
         status: status || chargerById.status,
-        location: location || chargerById.location,
+        location: location || chargerById.location
       },
       {
         new: true,
@@ -91,6 +91,14 @@ const deleteCharger = async (req, res) => {
       const error = new Error('The charger with the given ID was not found');
       return res.status(404).json({ msg: error.message });
     }
+
+    const locationById = await Location.findById(chargerById.location);
+    console.log(chargerById.location);
+    if (!locationById) {
+      const error = new Error('The location with the given ID was not found');
+      return res.status(404).json({ msg: error.message });
+    }
+
     const chargerToUpdate = await Charger.findByIdAndUpdate(
       req.params.id,
       {
@@ -101,14 +109,8 @@ const deleteCharger = async (req, res) => {
       }
     );
 
-    const locationById = await Location.findById(chargerById.location);
-    if (!locationById) {
-      const error = new Error('The location with the given ID was not found');
-      return res.status(404).json({ msg: error.message });
-    }
+    const newChargers = locationById.chargers.filter(charger => charger.toString() !== req.params.id);
 
-    const newChargers = locationById.chargers.filter(charger => charger.toString() !== req.params.id)
-    console.log(newChargers[0].toString(), req.params.id);
     const locationToUpdate = await Location.findByIdAndUpdate(chargerToUpdate.location, {
       chargers: newChargers,
     });

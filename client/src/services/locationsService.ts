@@ -1,5 +1,5 @@
 import { ILocation } from '../components/LocationsView/LocationsView';
-import { getRequest, patchRequest, postRequest } from '../helpers/requestsHelper';
+import { deleteRequest, getRequest, patchRequest, postRequest } from '../helpers/requestsHelper';
 
 export interface ILocationReqBody {
 	name: string;
@@ -36,4 +36,11 @@ export async function createNewLocation(body: ILocationReqBody): Promise<ILocati
  */
 export async function updateLocation(body: ILocationReqBody, id: string): Promise<ILocation> {
 	return await patchRequest<ILocationReqBody, ILocation>(`/api/locations/${id}`, body).then(response => response);
+}
+
+/**
+ * Remove a location
+ */
+export async function removeLocationById(id: string): Promise<ILocation> {
+	return await deleteRequest<ILocation>(`/api/locations/${id}`).then(response => response);
 }

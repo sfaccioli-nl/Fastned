@@ -1,5 +1,5 @@
 import { ICharger } from '../components/ChargersTable/ChargersTable';
-import { getRequest, patchRequest, postRequest } from '../helpers/requestsHelper';
+import { deleteRequest, getRequest, patchRequest, postRequest } from '../helpers/requestsHelper';
 
 export interface IChargerReqBody {
 	type: 'HPC' | 'T52' | 'T53C';
@@ -34,4 +34,11 @@ export async function createNewCharger(body: IChargerReqBody): Promise<ICharger>
  */
 export async function updateCharger(body: IChargerReqBody, id: string): Promise<ICharger> {
 	return await patchRequest<IChargerReqBody, ICharger>(`/api/chargers/${id}`, body).then(response => response);
+}
+
+/**
+ * Remove a charger
+ */
+export async function removeChargerById(id: string): Promise<ICharger> {
+	return await deleteRequest<ICharger>(`/api/chargers/${id}`).then(response => response);
 }

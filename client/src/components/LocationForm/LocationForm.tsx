@@ -1,12 +1,14 @@
-import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
-import { createNewLocation, getLocationById, ILocationReqBody, updateLocation } from '../../services/locationsService';
+import { createNewLocation, getLocationById, ILocationReqBody, removeLocationById, updateLocation } from '../../services/locationsService';
 import { sortByDateDesc } from '../../utils/sortByDate';
 import ChargersTable, { ICharger } from '../ChargersTable/ChargersTable';
+import { ILocation } from '../LocationsView/LocationsView';
+import Popup from '../Popup/Popup';
 import Button from '../UI/Button/Button';
 import styles from './LocationForm.module.scss';
 
@@ -14,9 +16,11 @@ import styles from './LocationForm.module.scss';
  * Component to add and edit a location
  */
 export default function LocationForm(): JSX.Element {
+	const [openPopup, setOpenPopup] = useState<boolean>(false);
 	const { id } = useParams();
 	const navigation = useNavigate();
-	const { location, locations, setLocation, setChargers, chargers, setLocations, setRefreshLocations } = useLocations();
+	const submitRef = useRef<HTMLButtonElement | null>(null);
+	const { location, locations, chargers, setLocation, setLocations, setChargers } = useLocations();
 
 	const { register, handleSubmit, reset } = useForm();
 
@@ -35,7 +39,9 @@ export default function LocationForm(): JSX.Element {
 		if (id) {
 			updateLocation(newLoc, id).then(response => {
 				setLocation(response);
-				setChargers(response.chargers as ICharger[]);
+				const filteredLocations = locations.filter((location: ILocation) => location._id !== id);
+				setLocations(sortByDateDesc([...filteredLocations, response]));
+				setChargers(sortByDateDesc(response.chargers as ICharger[]));
 			});
 		} else {
 			createNewLocation(newLoc).then(response => {
@@ -45,11 +51,24 @@ export default function LocationForm(): JSX.Element {
 		}
 	}
 
+	/**
+	 * Removes the selected location
+	 */
+	function removeLocation() {
+		if (id) {
+			removeLocationById(id).then(() => {
+				const filteredLocations = locations.filter((location: ILocation) => location._id !== id);
+				setLocations(sortByDateDesc([...filteredLocations]));
+				navigation('/');
+			});
+		}
+	}
+
 	useEffect(() => {
 		if (id && !location) {
 			getLocationById(id).then(response => {
 				setLocation(response);
-				setChargers(response.chargers as ICharger[]);
+				setChargers(sortByDateDesc(response.chargers as ICharger[]));
 				reset({ ...response });
 			});
 		}
@@ -66,10 +85,7 @@ export default function LocationForm(): JSX.Element {
 	return (
 		<div className={styles.container}>
 			<form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-				<Button type="submit" className={'primary'} onClick={onSubmit}>
-					<FontAwesomeIcon icon={faFloppyDisk} />
-					{id ? 'Update Location' : 'Save Location'}
-				</Button>
+				<button ref={submitRef} type="submit" style={{ display: 'none' }} />
 
 				<div className={styles.nameField}>
 					<label htmlFor="name">Name</label>
@@ -102,7 +118,36 @@ export default function LocationForm(): JSX.Element {
 				</div>
 			</form>
 
+			<Popup
+				visible={openPopup}
+				setVisible={setOpenPopup}
+				title="Remove Location"
+				content={<p>Are you sure you want to delete the location?</p>}
+				onSave={removeLocation}
+			/>
+
 			<ChargersTable />
+
+			<div className={styles.locationActions}>
+				{id && (
+					<Button type="submit" className={'secondary'} onClick={() => setOpenPopup(true)}>
+						<FontAwesomeIcon icon={faClose} />
+						Remove Location
+					</Button>
+				)}
+
+				<Button
+					type="submit"
+					className={'primary'}
+					onClick={() => {
+						if (submitRef && submitRef.current) {
+							submitRef.current.click();
+						}
+					}}>
+					<FontAwesomeIcon icon={faFloppyDisk} />
+					{id ? 'Update Location' : 'Save Location'}
+				</Button>
+			</div>
 		</div>
 	);
 }
