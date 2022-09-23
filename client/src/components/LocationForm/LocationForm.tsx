@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
+import { useSnackBar } from '../../contexts/SnackBarContext/snackBarContext';
 import { createNewLocation, getLocationById, ILocationReqBody, removeLocationById, updateLocation } from '../../services/locationsService';
 import { sortByDateDesc } from '../../utils/sortByDate';
 import ChargersTable, { ICharger } from '../ChargersTable/ChargersTable';
@@ -17,6 +18,7 @@ import styles from './LocationForm.module.scss';
  */
 export default function LocationForm(): JSX.Element {
 	const [openPopup, setOpenPopup] = useState<boolean>(false);
+	const { setSnackBar } = useSnackBar();
 	const { id } = useParams();
 	const navigation = useNavigate();
 	const submitRef = useRef<HTMLButtonElement | null>(null);
@@ -36,19 +38,27 @@ export default function LocationForm(): JSX.Element {
 			country: data.country,
 			chargers: chargers?.map((c: ICharger) => c._id)
 		};
-		if (id) {
-			updateLocation(newLoc, id).then(response => {
-				setLocation(response);
-				const filteredLocations = locations.filter((location: ILocation) => location._id !== id);
-				setLocations(sortByDateDesc([...filteredLocations, response]));
-				setChargers(sortByDateDesc(response.chargers as ICharger[]));
-			});
-		} else {
-			createNewLocation(newLoc).then(response => {
-				setLocations(sortByDateDesc([...locations, response]));
-				navigation('/');
-			});
-		}
+
+		const promise = id ? updateLocation(newLoc, id) : createNewLocation(newLoc);
+
+		promise.then(response => {
+			if (response.msg) {
+				setSnackBar({
+					open: true,
+					msg: response.msg,
+					type: 'error'
+				});
+			} else {
+				const locationsToSet = id ? locations.filter((location: ILocation) => location._id !== id) : locations;
+				setLocations(sortByDateDesc([...locationsToSet, response]));
+				setSnackBar({
+					open: true,
+					msg: `Location ${id ? 'updated' : 'created'} successfully`,
+					type: 'success'
+				});
+				if (!id) navigation('/');
+			}
+		});
 	}
 
 	/**
@@ -59,6 +69,11 @@ export default function LocationForm(): JSX.Element {
 			removeLocationById(id).then(() => {
 				const filteredLocations = locations.filter((location: ILocation) => location._id !== id);
 				setLocations(sortByDateDesc([...filteredLocations]));
+				setSnackBar({
+					open: true,
+					msg: 'Location removed successfully',
+					type: 'success'
+				});
 				navigation('/');
 			});
 		}

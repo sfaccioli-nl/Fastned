@@ -33,13 +33,7 @@ svg {
     margin-top: 20px;
     margin-bottom: 30px;
   
-    @media (media-query(max, md)) {
-      grid-template-columns: 1fr;
-  
-      .nameField, .locationField, .cityField, .postalCodeField, .countryField {
-        grid-column: 1 / -1;
-      }
-    }
+   
   
     label,
     input, 
@@ -103,6 +97,14 @@ svg {
     .success {
       color: var(--positive);
     }
+
+    @media (media-query(max, md)) {
+      grid-template-columns: 1fr;
+  
+      .nameField, .locationField, .cityField, .postalCodeField, .countryField {
+        grid-column: 1 / -1;
+      }
+    }
   }
 
   table {
@@ -118,14 +120,4 @@ svg {
 }
 
 
-
-@media screen and (max-width: 767px){
-  .form {
-    grid-template-columns: 1fr;
-    
-    .nameField, .locationField, .cityField, .postalCodeField, .countryField {
-      grid-column: 1 / -1;
-    }
-  }
-}
 

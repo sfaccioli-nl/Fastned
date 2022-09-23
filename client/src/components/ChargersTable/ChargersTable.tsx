@@ -2,6 +2,7 @@ import { faPenToSquare, faPlus, faTrash } from '@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
+import { useSnackBar } from '../../contexts/SnackBarContext/snackBarContext';
 import { removeChargerById } from '../../services/chargersService';
 import { getRelativeDate } from '../../utils/getRelativeDate';
 import { sortByDateDesc } from '../../utils/sortByDate';
@@ -18,6 +19,10 @@ export interface ICharger {
 	status: 'CONNECTED' | 'NOT_CONNECTED' | 'REMOVED';
 	updatedAt: string;
 	location: string;
+}
+
+export interface IChargerResponse extends ICharger {
+	msg: string;
 }
 
 interface IChargersTableValue {
@@ -44,6 +49,7 @@ export default function ChargersTable(): JSX.Element {
 	const [chargerId, setChargerId] = useState<string | undefined>();
 	const submitRef = useRef();
 	const { chargers, setChargers } = useLocations();
+	const { setSnackBar } = useSnackBar();
 
 	const tableTitles = ['Id', 'Type ', 'Serial Number', 'Status', 'Last Updated', 'Actions'];
 
@@ -99,6 +105,11 @@ export default function ChargersTable(): JSX.Element {
 				const filteredChargers = chargers.filter((charger: ICharger) => charger._id !== chargerId);
 				setChargers(sortByDateDesc([...filteredChargers]));
 				setOpenPopup(false);
+				setSnackBar({
+					open: true,
+					msg: 'Charger removed successfully',
+					type: 'success'
+				});
 			});
 		}
 	}

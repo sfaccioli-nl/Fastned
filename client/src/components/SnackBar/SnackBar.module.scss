@@ -1,0 +1,26 @@
+@import '../../styles/theme';
+@import '../../styles/variables';
+@import '../../styles/shared/animations';
+
+.container {
+  border-radius: 5px;
+  font-size: typography(label, l);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 1s forwards;
+  margin-right: 20px;
+
+  p {
+    padding: 10px;
+    font-weight: font-weight(bold);
+  }
+}
+
+.success {
+  color: var(--positive);
+} 
+
+.error {
+  color: var(--negative);
+} 

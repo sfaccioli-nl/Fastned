@@ -13,6 +13,10 @@ export interface ILocation {
 	country: string;
 }
 
+export interface ILocationResponse extends ILocation {
+	msg: string;
+}
+
 /**
  * Locations list component
  */
