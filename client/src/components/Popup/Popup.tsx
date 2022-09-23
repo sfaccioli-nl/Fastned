@@ -33,7 +33,7 @@ export default function Popup(props: IPopup): JSX.Element {
 							<Button
 								className="primary"
 								onClick={() => {
-									if (props.submitRef) {
+									if (props.submitRef && props.submitRef.current) {
 										props.submitRef.current.click();
 									} else {
 										props.onSave && props.onSave();

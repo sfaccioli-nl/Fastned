@@ -1,13 +1,14 @@
+import { statusTypeMapper } from '../../ChargersTable/ChargersTable';
 import styles from './Tag.module.scss';
 
 interface ITagProps {
 	text: string;
-	color: string;
+	statusColor: statusTypeMapper;
 }
 
 /**
  * Tag component
  */
 export default function Tag(props: ITagProps): JSX.Element {
-	return <p className={`${styles.tag} ${styles[props.color]}`}>{props.text}</p>;
+	return <span className={`${styles.tag} ${styles[props.statusColor]}`}>{props.text}</span>;
 }

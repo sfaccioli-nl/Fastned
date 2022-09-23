@@ -1,19 +1,23 @@
-p {
+.tag {
   color: var(--white);
   border-radius: 5px;
+  padding: 5px;  
 }
 
-
-
-.green {
+.connected {
   background-color: var(--positive);
 }
 
-.red {
+.notConnected {
   background-color: var(--negative);
 }
 
-.blue {
+
+.removed {
   background-color: var(--accent400);
 }
+
+
+
+
 

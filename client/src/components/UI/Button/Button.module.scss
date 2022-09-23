@@ -34,3 +34,10 @@
     cursor: pointer;
   }
 }
+
+@media (media-query(max, md)) {
+  .button {
+    font-size: size(m);
+    padding: 5px 9px;
+  }
+}

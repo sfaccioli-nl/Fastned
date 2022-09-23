@@ -3,8 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
 import { useSnackBar } from '../../contexts/SnackBarContext/snackBarContext';
+import useMediaQuery from '../../hooks/useMediaQuery';
 import { removeChargerById } from '../../services/chargersService';
 import { sortByDateDesc } from '../../utils/sortByDate';
+import Card, { ICardData } from '../Card/Card';
 import { ChargerForm } from '../ChargerForm/ChargerForm';
 import GenericTable from '../GenericTable/GenericTable';
 import Popup from '../Popup/Popup';
@@ -40,6 +42,12 @@ enum PopupActionType {
 	REMOVE = 'Remove Charger'
 }
 
+export enum statusTypeMapper {
+	CONNECTED = 'connected',
+	NOT_CONNECTED = 'notConnected',
+	REMOVED = 'removed'
+}
+
 /**
  * Chargers table component
  */
@@ -50,8 +58,15 @@ export default function ChargersTable(): JSX.Element {
 	const submitRef = useRef();
 	const { chargers, setChargers } = useLocations();
 	const { setSnackBar } = useSnackBar();
+	const isMedium = useMediaQuery('(max-width: 767px)');
 
 	const tableTitles = ['Id', 'Type ', 'Serial Number', 'Status', 'Last Updated', 'Actions'];
+
+	const statusMapper = {
+		CONNECTED: 'Connected',
+		NOT_CONNECTED: 'Not connected',
+		REMOVED: 'Removed'
+	};
 
 	const chargersTableData: IChargersTableValue[] | undefined =
 		chargers &&
@@ -59,10 +74,10 @@ export default function ChargersTable(): JSX.Element {
 			id: charger._id,
 			type: charger.type,
 			serialNumber: charger.serialNumber,
-			status: <Tag text={charger.status} color={charger.status === 'CONNECTED' ? 'green' : charger.status === 'NOT_CONNECTED' ? 'red' : 'blue'} />,
+			status: <Tag text={statusMapper[charger.status]} statusColor={statusTypeMapper[charger.status]} />,
 			updatedAt: `${new Date(charger.updatedAt).toLocaleDateString()} ${new Date(charger.updatedAt).toLocaleTimeString()}`,
 			links: (
-				<div className={styles.actions}>
+				<div id="actions" className={styles.actions}>
 					<FontAwesomeIcon className={styles.edit} icon={faPenToSquare} onClick={() => handlesEdit(charger._id)} />
 					<FontAwesomeIcon className={styles.remove} icon={faTrash} onClick={() => handlesRemove(charger._id)} />
 				</div>
@@ -114,6 +129,37 @@ export default function ChargersTable(): JSX.Element {
 		}
 	}
 
+	/**
+	 * Generates popup content
+	 */
+	function generatePopupContent() {
+		if ([PopupActionType.ADD, PopupActionType.EDIT].includes(popupActionType)) {
+			return <ChargerForm chargerId={chargerId} submitRef={submitRef} setOpenPopup={setOpenPopup} />;
+		}
+
+		return <p>Are you sure you want to delete this charger?</p>;
+	}
+
+	/**
+	 * Maps charger to card data model
+	 */
+	function mapToCard(charger: IChargersTableValue): ICardData[] {
+		return [
+			{
+				label: 'Type',
+				value: charger.type
+			},
+			{
+				label: 'Status',
+				value: charger.status
+			},
+			{
+				label: 'Last Updated',
+				value: charger.updatedAt
+			}
+		] as ICardData[];
+	}
+
 	return (
 		<div className={styles.container}>
 			<Button className="primary" onClick={handlesAddNew}>
@@ -121,27 +167,36 @@ export default function ChargersTable(): JSX.Element {
 				Add Charger
 			</Button>
 
-			<GenericTable tableHeadTitles={tableTitles} data={chargersTableData} />
-
-			{(popupActionType === PopupActionType.ADD || popupActionType === PopupActionType.EDIT) && (
-				<Popup
-					visible={openPopup}
-					setVisible={setOpenPopup}
-					title={popupActionType}
-					content={<ChargerForm chargerId={chargerId} submitRef={submitRef} setOpenPopup={setOpenPopup} />}
-					submitRef={submitRef}
-				/>
+			{chargersTableData && isMedium ? (
+				chargersTableData.map((charger: IChargersTableValue, idx: number) => (
+					<Card
+						key={idx}
+						title={charger.serialNumber}
+						data={mapToCard(charger)}
+						links={
+							<div>
+								<Button className="primary" type="button" onClick={() => handlesEdit(charger.id)}>
+									Edit
+								</Button>
+								<Button className="secondary" type="button" onClick={() => handlesRemove(charger.id)}>
+									Remove
+								</Button>
+							</div>
+						}
+					/>
+				))
+			) : (
+				<GenericTable tableHeadTitles={tableTitles} data={chargersTableData} />
 			)}
 
-			{popupActionType === PopupActionType.REMOVE && (
-				<Popup
-					visible={openPopup}
-					setVisible={setOpenPopup}
-					title={popupActionType}
-					content={<p>Are you sure you want to delete this charger?</p>}
-					onSave={removeCharger}
-				/>
-			)}
+			<Popup
+				visible={openPopup}
+				setVisible={setOpenPopup}
+				title={popupActionType}
+				content={generatePopupContent()}
+				submitRef={submitRef}
+				onSave={removeCharger}
+			/>
 		</div>
 	);
 }
