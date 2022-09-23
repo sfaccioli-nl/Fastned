@@ -2,6 +2,7 @@ import { faClose, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
+import { ErrorMessage } from '@hookform/error-message';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
 import { useSnackBar } from '../../contexts/SnackBarContext/snackBarContext';
@@ -24,7 +25,12 @@ export default function LocationForm(): JSX.Element {
 	const submitRef = useRef<HTMLButtonElement | null>(null);
 	const { location, locations, chargers, setLocation, setLocations, setChargers } = useLocations();
 
-	const { register, handleSubmit, reset } = useForm();
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors }
+	} = useForm();
 
 	/**
 	 * on submit form
@@ -104,32 +110,42 @@ export default function LocationForm(): JSX.Element {
 
 				<div className={styles.nameField}>
 					<label htmlFor="name">Name</label>
-					<input id="name" type="text" placeholder="Name" {...register('name', { required: true })} />
+					<input id="name" type="text" placeholder="Name" {...register('name', { required: 'Name is required' })} />
+					<ErrorMessage errors={errors} name="name" />
 				</div>
 
 				<div className={styles.locationField}>
 					<label htmlFor="locationNro">Location No</label>
-					<input id="locationNro" type="number" placeholder="Location No" {...register('location', { required: true, valueAsNumber: true })} />
+					<input
+						id="locationNro"
+						type="number"
+						placeholder="Location No"
+						{...register('location', { required: 'Location is required', valueAsNumber: true })}
+					/>
+					<ErrorMessage errors={errors} name="location" />
 				</div>
 
 				<div className={styles.cityField}>
 					<label htmlFor="city">City</label>
-					<input id="city" type="text" placeholder="City" {...register('city', { required: true })} />
+					<input id="city" type="text" placeholder="City" {...register('city', { required: 'City is required' })} />
+					<ErrorMessage errors={errors} name="city" />
 				</div>
 
 				<div className={styles.postalCodeField}>
 					<label htmlFor="postalCode">Postal Code</label>
-					<input id="postalCode" type="text" placeholder="Postal Code" {...register('postalCode', { required: true })} />
+					<input id="postalCode" type="text" placeholder="Postal Code" {...register('postalCode', { required: 'Postal Code is required' })} />
+					<ErrorMessage errors={errors} name="postalCode" />
 				</div>
 
 				<div className={styles.countryField}>
 					<label htmlFor="country">Country:</label>
-					<select id="country" {...register('country', { required: true })}>
+					<select id="country" {...register('country', { required: 'Country is required' })}>
 						<option value="">--Please choose an option--</option>
 						<option value="NLD">Netherlands</option>
 						<option value="BEL">Belgium</option>
 						<option value="DEU">Germany</option>
 					</select>
+					<ErrorMessage errors={errors} name="country" />
 				</div>
 			</form>
 

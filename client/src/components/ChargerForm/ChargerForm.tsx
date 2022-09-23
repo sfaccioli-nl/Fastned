@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
+import { ErrorMessage } from '@hookform/error-message';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
 import { useSnackBar } from '../../contexts/SnackBarContext/snackBarContext';
 import { createNewCharger, getChargerById, IChargerReqBody, updateCharger } from '../../services/chargersService';
@@ -17,7 +18,12 @@ interface IChargerForm {
  * Component to add or edit a charger
  */
 export function ChargerForm(props: IChargerForm): JSX.Element {
-	const { register, handleSubmit, reset } = useForm();
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors }
+	} = useForm();
 	const { location, setChargers, chargers } = useLocations();
 	const { setSnackBar } = useSnackBar();
 
@@ -63,27 +69,30 @@ export function ChargerForm(props: IChargerForm): JSX.Element {
 			<form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
 				<div className={styles.statusField}>
 					<label htmlFor="status">Status</label>
-					<select id="status" {...register('status', { required: true })}>
+					<select id="status" {...register('status', { required: 'Status is required' })}>
 						<option value="">--Please choose an option--</option>
 						<option value="CONNECTED">CONNECTED</option>
 						<option value="NOT_CONNECTED">NOT CONNECTED</option>
 						<option value="REMOVED">REMOVED</option>
 					</select>
+					<ErrorMessage errors={errors} name="status" />
 				</div>
 
 				<div className={styles.typeField}>
 					<label htmlFor="type">Type</label>
-					<select id="type" {...register('type', { required: true })}>
+					<select id="type" {...register('type', { required: 'Type is required' })}>
 						<option value="">--Please choose an option--</option>
 						<option value="HPC">HPC</option>
 						<option value="T52">T52</option>
 						<option value="T53C">T53C</option>
 					</select>
+					<ErrorMessage errors={errors} name="type" />
 				</div>
 
 				<div className={styles.serialNumberField}>
 					<label htmlFor="serialNumber">Serial Number</label>
-					<input id="serialNumber" type="text" placeholder="Serial Number" {...register('serialNumber', { required: true })} />
+					<input id="serialNumber" type="text" placeholder="Serial Number" {...register('serialNumber', { required: 'Serial number is required' })} />
+					<ErrorMessage errors={errors} name="serialNumber" />
 				</div>
 
 				<button ref={props.submitRef} type="submit" style={{ display: 'none' }} />
