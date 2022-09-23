@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin: 20px;
+  padding: 10px;
+
+  #actions {
+    .edit {
+      color: var(--primaryA);
+    }
+    .remove {
+      color: var(--negative);
+    }
+  
+    svg {
+      cursor: pointer;
+      padding: 3px;
+    }
+  }
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+  }
+
+  h2 {
+    margin-top: 10px;
+  }
+
+  .info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding: 15px;
+
+    span {
+      font: 15px;
+      padding: 2px;
+    }
+
+    .field{
+      padding: 5px;
+      font-size: 10px;
+    }
+  }
+
+  h1 {
+    font-size: 10px;
+  }
+
+}
+
+
+
+
+@media (max-width: 600px) {
+  .container {
+    max-width: 500px;
+    min-height: 120px;
+  }
+}

@@ -47,3 +47,10 @@ svg {
     margin-right: 15px;
   }
 }
+
+@media (media-query(max, md)) {
+  .form {
+     flex-direction: column;
+    }
+  
+}

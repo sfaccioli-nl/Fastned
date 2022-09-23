@@ -18,6 +18,19 @@
 
     p {
       font-weight: font-weight(bold);
+      color: var(--primaryA);
+    }
+  }
+}
+
+@media (media-query(max, md)) {
+  .container {
+    width: 100%;
+
+    .header {
+      padding: 10px;
+      margin-left: 20px;
+      margin-right: 20px;
     }
   }
 }
