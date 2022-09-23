@@ -8,8 +8,11 @@
   .header {
     $padding: 30px;
     display: flex;
-    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
     width: 100%;
+    align-items: center;
     height: 70px;
     background-color: var(--primaryB);
     color: var(--primaryA);
@@ -30,5 +33,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-top: 100px;
   }
 }

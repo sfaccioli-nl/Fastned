@@ -2,13 +2,14 @@ import { faPenToSquare, faPlus, faTrash } from '@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRef, useState } from 'react';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
+import { useSnackBar } from '../../contexts/SnackBarContext/snackBarContext';
 import { removeChargerById } from '../../services/chargersService';
-import { getRelativeDate } from '../../utils/getRelativeDate';
 import { sortByDateDesc } from '../../utils/sortByDate';
 import { ChargerForm } from '../ChargerForm/ChargerForm';
 import GenericTable from '../GenericTable/GenericTable';
 import Popup from '../Popup/Popup';
 import Button from '../UI/Button/Button';
+import Tag from '../UI/Tag/Tag';
 import styles from './ChargersTable.module.scss';
 
 export interface ICharger {
@@ -20,11 +21,15 @@ export interface ICharger {
 	location: string;
 }
 
+export interface IChargerResponse extends ICharger {
+	msg: string;
+}
+
 interface IChargersTableValue {
 	id: string;
 	type: string;
 	serialNumber: string;
-	status: string;
+	status: any;
 	updatedAt: string;
 	links: any;
 }
@@ -44,6 +49,7 @@ export default function ChargersTable(): JSX.Element {
 	const [chargerId, setChargerId] = useState<string | undefined>();
 	const submitRef = useRef();
 	const { chargers, setChargers } = useLocations();
+	const { setSnackBar } = useSnackBar();
 
 	const tableTitles = ['Id', 'Type ', 'Serial Number', 'Status', 'Last Updated', 'Actions'];
 
@@ -53,8 +59,8 @@ export default function ChargersTable(): JSX.Element {
 			id: charger._id,
 			type: charger.type,
 			serialNumber: charger.serialNumber,
-			status: charger.status,
-			updatedAt: getRelativeDate(charger.updatedAt),
+			status: <Tag text={charger.status} color={charger.status === 'CONNECTED' ? 'green' : charger.status === 'NOT_CONNECTED' ? 'red' : 'blue'} />,
+			updatedAt: `${new Date(charger.updatedAt).toLocaleDateString()} ${new Date(charger.updatedAt).toLocaleTimeString()}`,
 			links: (
 				<div className={styles.actions}>
 					<FontAwesomeIcon className={styles.edit} icon={faPenToSquare} onClick={() => handlesEdit(charger._id)} />
@@ -99,6 +105,11 @@ export default function ChargersTable(): JSX.Element {
 				const filteredChargers = chargers.filter((charger: ICharger) => charger._id !== chargerId);
 				setChargers(sortByDateDesc([...filteredChargers]));
 				setOpenPopup(false);
+				setSnackBar({
+					open: true,
+					msg: 'Charger removed successfully',
+					type: 'success'
+				});
 			});
 		}
 	}
