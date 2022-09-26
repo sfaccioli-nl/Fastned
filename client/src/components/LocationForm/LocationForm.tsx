@@ -13,6 +13,7 @@ import { ILocation } from '../LocationsView/LocationsView';
 import Popup from '../Popup/Popup';
 import Button from '../UI/Button/Button';
 import styles from './LocationForm.module.scss';
+import { ICountry } from '../../services/countriesService';
 
 /**
  * Component to add and edit a location
@@ -23,7 +24,7 @@ export default function LocationForm(): JSX.Element {
 	const { id } = useParams();
 	const navigation = useNavigate();
 	const submitRef = useRef<HTMLButtonElement | null>(null);
-	const { location, locations, chargers, setLocation, setLocations, setChargers } = useLocations();
+	const { location, locations, chargers, countries, setLocation, setLocations, setChargers } = useLocations();
 
 	const {
 		register,
@@ -141,9 +142,11 @@ export default function LocationForm(): JSX.Element {
 					<label htmlFor="country">Country:</label>
 					<select id="country" {...register('country', { required: 'Country is required' })}>
 						<option value="">--Please choose an option--</option>
-						<option value="NLD">Netherlands</option>
-						<option value="BEL">Belgium</option>
-						<option value="DEU">Germany</option>
+						{countries.map((country: ICountry, idx: any) => (
+							<option key={idx} value={country.code}>
+								{country.name}
+							</option>
+						))}
 					</select>
 					<ErrorMessage errors={errors} name="country" />
 				</div>

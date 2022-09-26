@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { ICharger } from '../../components/ChargersTable/ChargersTable';
 import { ILocation } from '../../components/LocationsView/LocationsView';
+import { getAllCountries, ICountry } from '../../services/countriesService';
 import { getAllLocations } from '../../services/locationsService';
 import { sortByDateDesc } from '../../utils/sortByDate';
 
@@ -15,6 +16,7 @@ function LocationsProvider({ children }: LocationsProviderProps) {
 	const [locations, setLocations] = useState<ILocation[]>();
 	const [location, setLocation] = useState<ILocation>();
 	const [chargers, setChargers] = useState<ICharger[]>();
+	const [countries, setCountries] = useState<ICountry[]>();
 
 	useEffect(() => {
 		getAllLocations()
@@ -22,9 +24,15 @@ function LocationsProvider({ children }: LocationsProviderProps) {
 				setLocations(sortByDateDesc<ILocation>(locations));
 			})
 			.catch(e => console.log(e));
+
+		getAllCountries()
+			.then(countries => {
+				setCountries(countries.sort());
+			})
+			.catch(e => console.log(e));
 	}, []);
 
-	const value = { locations, location, chargers, setChargers, setLocations, setLocation };
+	const value = { locations, location, chargers, countries, setChargers, setLocations, setLocation };
 
 	return <LocationsContext.Provider value={value}>{children}</LocationsContext.Provider>;
 }

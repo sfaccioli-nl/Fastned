@@ -5,6 +5,7 @@ import connectDB from './config/db.js';
 import * as dotenv from 'dotenv';
 import locationsRouter from './routes/locationsRoute.js';
 import chargersRouter from './routes/chargersRoute.js';
+import countriesRouter from './routes/countriesRoute.js';
 
 const app = express();
 app.use(express.json());
@@ -18,6 +19,7 @@ connectDB();
 //Routing
 app.use('/api/locations', locationsRouter);
 app.use('/api/chargers', chargersRouter);
+app.use('/api/countries', countriesRouter);
 
 const PORT = process.env.PORT || 4000;
 
