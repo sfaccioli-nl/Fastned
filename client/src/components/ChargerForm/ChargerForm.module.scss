@@ -32,6 +32,11 @@ svg {
   margin-bottom: 30px;
   margin-top: 30px;
 
+    
+  .error {
+    color: var(--negative);
+  }
+
   input, select {
     background-color: var(--mono300);
     color: var(--primaryA);

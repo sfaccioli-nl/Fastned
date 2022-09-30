@@ -1,7 +1,7 @@
 import { faClose, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
-import { FieldValues, useForm } from 'react-hook-form';
+import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
@@ -29,7 +29,9 @@ export default function LocationForm(): JSX.Element {
 	const {
 		register,
 		handleSubmit,
+		setValue,
 		reset,
+		control,
 		formState: { errors }
 	} = useForm();
 
@@ -112,7 +114,7 @@ export default function LocationForm(): JSX.Element {
 				<div className={styles.nameField}>
 					<label htmlFor="name">Name</label>
 					<input id="name" type="text" placeholder="Name" {...register('name', { required: 'Name is required' })} />
-					<ErrorMessage errors={errors} name="name" />
+					<ErrorMessage errors={errors} name="name" render={({ message }) => <p className={styles.error}>{message}</p>} />
 				</div>
 
 				<div className={styles.locationField}>
@@ -123,32 +125,39 @@ export default function LocationForm(): JSX.Element {
 						placeholder="Location No"
 						{...register('location', { required: 'Location is required', valueAsNumber: true })}
 					/>
-					<ErrorMessage errors={errors} name="location" />
+					<ErrorMessage errors={errors} name="location" render={({ message }) => <p className={styles.error}>{message}</p>} />
 				</div>
 
 				<div className={styles.cityField}>
 					<label htmlFor="city">City</label>
 					<input id="city" type="text" placeholder="City" {...register('city', { required: 'City is required' })} />
-					<ErrorMessage errors={errors} name="city" />
+					<ErrorMessage errors={errors} name="city" render={({ message }) => <p className={styles.error}>{message}</p>} />
 				</div>
 
 				<div className={styles.postalCodeField}>
 					<label htmlFor="postalCode">Postal Code</label>
 					<input id="postalCode" type="text" placeholder="Postal Code" {...register('postalCode', { required: 'Postal Code is required' })} />
-					<ErrorMessage errors={errors} name="postalCode" />
+					<ErrorMessage errors={errors} name="postalCode" render={({ message }) => <p className={styles.error}>{message}</p>} />
 				</div>
 
 				<div className={styles.countryField}>
 					<label htmlFor="country">Country:</label>
-					<select id="country" {...register('country', { required: 'Country is required' })}>
-						<option value="">--Please choose an option--</option>
-						{countries.map((country: ICountry, idx: any) => (
-							<option key={idx} value={country.code}>
-								{country.name}
-							</option>
-						))}
-					</select>
-					<ErrorMessage errors={errors} name="country" />
+					<Controller
+						control={control}
+						name="countries"
+						render={({ field }) => {
+							return (
+								<select {...field} {...register('country', { required: 'Country is required' })}>
+									{(countries || []).map((country: ICountry, idx: any) => (
+										<option key={idx} value={country.code}>
+											{country.name}
+										</option>
+									))}
+								</select>
+							);
+						}}
+					/>
+					<ErrorMessage errors={errors} name="country" render={({ message }) => <p className={styles.error}>{message}</p>} />
 				</div>
 			</form>
 
