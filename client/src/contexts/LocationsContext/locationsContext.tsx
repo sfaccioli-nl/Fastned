@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { ICharger } from '../../components/ChargersTable/ChargersTable';
 import { ILocation } from '../../components/LocationsView/LocationsView';
@@ -18,19 +19,19 @@ function LocationsProvider({ children }: LocationsProviderProps) {
 	const [chargers, setChargers] = useState<ICharger[]>();
 	const [countries, setCountries] = useState<ICountry[]>();
 
-	useEffect(() => {
-		getAllLocations()
-			.then(locations => {
-				setLocations(sortByDateDesc<ILocation>(locations));
-			})
-			.catch(e => console.log(e));
+	const { data: locationsData } = useQuery(['locationsData'], () => getAllLocations());
 
-		getAllCountries()
-			.then(countries => {
-				setCountries(countries.sort());
-			})
-			.catch(e => console.log(e));
-	}, []);
+	const { data: countriesData } = useQuery(['countriesData'], () => getAllCountries());
+
+	useEffect(() => {
+		if (locationsData) {
+			setLocations(sortByDateDesc([...locationsData]));
+		}
+
+		if (countriesData) {
+			setCountries(countriesData);
+		}
+	}, [locationsData, countriesData]);
 
 	const value = { locations, location, chargers, countries, setChargers, setLocations, setLocation };
 

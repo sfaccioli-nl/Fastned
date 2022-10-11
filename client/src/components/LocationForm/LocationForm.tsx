@@ -6,7 +6,7 @@ import { ErrorMessage } from '@hookform/error-message';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocations } from '../../contexts/LocationsContext/locationsContext';
 import { useSnackBar } from '../../contexts/SnackBarContext/snackBarContext';
-import { createNewLocation, getLocationById, ILocationReqBody, removeLocationById, updateLocation } from '../../services/locationsService';
+import { ILocationReqBody, removeLocationById } from '../../services/locationsService';
 import { sortByDateDesc } from '../../utils/sortByDate';
 import ChargersTable, { ICharger } from '../ChargersTable/ChargersTable';
 import { ILocation } from '../LocationsView/LocationsView';
@@ -14,26 +14,33 @@ import Popup from '../Popup/Popup';
 import Button from '../UI/Button/Button';
 import styles from './LocationForm.module.scss';
 import { ICountry } from '../../services/countriesService';
+import { useMutation } from '@tanstack/react-query';
+
+interface ILocationFormProps {
+	submitAction: string;
+	onSubmit: (data: ILocationReqBody) => Promise<void>;
+	location?: ILocation;
+}
 
 /**
  * Component to add and edit a location
  */
-export default function LocationForm(): JSX.Element {
+export default function LocationForm(props: ILocationFormProps): JSX.Element {
 	const [openPopup, setOpenPopup] = useState<boolean>(false);
 	const { setSnackBar } = useSnackBar();
-	const { id } = useParams();
 	const navigation = useNavigate();
 	const submitRef = useRef<HTMLButtonElement | null>(null);
-	const { location, locations, chargers, countries, setLocation, setLocations, setChargers } = useLocations();
+	const { locations, chargers, countries, setLocation, setLocations, setChargers } = useLocations();
 
+	const { id } = useParams();
 	const {
 		register,
+		formState: { errors },
 		handleSubmit,
-		setValue,
-		reset,
-		control,
-		formState: { errors }
-	} = useForm();
+		control
+	} = useForm({
+		defaultValues: props.location || {}
+	});
 
 	/**
 	 * on submit form
@@ -48,55 +55,27 @@ export default function LocationForm(): JSX.Element {
 			chargers: chargers?.map((c: ICharger) => c._id)
 		};
 
-		const promise = id ? updateLocation(newLoc, id) : createNewLocation(newLoc);
-
-		promise.then(response => {
-			if (response.msg) {
-				setSnackBar({
-					open: true,
-					msg: response.msg,
-					type: 'error'
-				});
-			} else {
-				const locationsToSet = id ? locations.filter((location: ILocation) => location._id !== id) : locations;
-				setLocations(sortByDateDesc([...locationsToSet, response]));
-				setSnackBar({
-					open: true,
-					msg: `Location ${id ? 'updated' : 'created'} successfully`,
-					type: 'success'
-				});
-				if (!id) navigation('/');
-			}
-		});
+		props.onSubmit(newLoc);
 	}
 
-	/**
-	 * Removes the selected location
-	 */
-	function removeLocation() {
-		if (id) {
-			removeLocationById(id).then(() => {
-				const filteredLocations = locations.filter((location: ILocation) => location._id !== id);
-				setLocations(sortByDateDesc([...filteredLocations]));
-				setSnackBar({
-					open: true,
-					msg: 'Location removed successfully',
-					type: 'success'
-				});
-				navigation('/');
+	const mutation = useMutation((id: string) => removeLocationById(id), {
+		onSuccess: () => {
+			const filteredLocations = locations.filter((location: ILocation) => location._id !== id);
+			setLocations(sortByDateDesc([...filteredLocations]));
+			setSnackBar({
+				open: true,
+				msg: 'Location removed successfully',
+				type: 'success'
 			});
+			navigation('/');
 		}
-	}
+	});
 
-	useEffect(() => {
-		if (id && !location) {
-			getLocationById(id).then(response => {
-				setLocation(response);
-				setChargers(sortByDateDesc(response.chargers as ICharger[]));
-				reset({ ...response });
-			});
-		}
-	}, [id, location, reset, setChargers, setLocation]);
+	const { isSuccess } = mutation;
+
+	if (isSuccess) {
+		navigation('/');
+	}
 
 	useEffect(() => {
 		return () => {
@@ -144,7 +123,7 @@ export default function LocationForm(): JSX.Element {
 					<label htmlFor="country">Country:</label>
 					<Controller
 						control={control}
-						name="countries"
+						name="country"
 						render={({ field }) => {
 							return (
 								<select {...field} {...register('country', { required: 'Country is required' })}>
@@ -161,13 +140,15 @@ export default function LocationForm(): JSX.Element {
 				</div>
 			</form>
 
-			<Popup
-				visible={openPopup}
-				setVisible={setOpenPopup}
-				title="Remove Location"
-				content={<p>Are you sure you want to delete the location?</p>}
-				onSave={removeLocation}
-			/>
+			{id && (
+				<Popup
+					visible={openPopup}
+					setVisible={setOpenPopup}
+					title="Remove Location"
+					content={<p>Are you sure you want to delete the location?</p>}
+					onSave={() => mutation.mutate(id)}
+				/>
+			)}
 
 			<ChargersTable />
 
@@ -188,7 +169,7 @@ export default function LocationForm(): JSX.Element {
 						}
 					}}>
 					<FontAwesomeIcon icon={faFloppyDisk} />
-					{id ? 'Update Location' : 'Save Location'}
+					{`${props.submitAction} Location`}
 				</Button>
 			</div>
 		</div>

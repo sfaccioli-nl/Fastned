@@ -1,8 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { rest } from 'msw';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import CreateLocation from '../components/CreateLocation/CreateLocation';
+import EditLocation from '../components/EditLocation/EditLocation';
 import Layout from '../components/Layout/Layout';
-import LocationForm from '../components/LocationForm/LocationForm';
 import LocationsView from '../components/LocationsView/LocationsView';
 import { LocationsProvider } from '../contexts/LocationsContext/locationsContext';
 import { SnackBarProvider } from '../contexts/SnackBarContext/snackBarContext';
@@ -17,8 +18,8 @@ test('renders the Add Location button', async () => {
 					<Routes>
 						<Route element={<Layout />}>
 							<Route index element={<LocationsView />} />
-							<Route path="/location" element={<LocationForm />} />
-							<Route path="/location/:id" element={<LocationForm />} />
+							<Route path="/location/create" element={<CreateLocation />} />
+							<Route path="/location/:id" element={<EditLocation />} />
 						</Route>
 					</Routes>
 				</SnackBarProvider>
@@ -41,8 +42,8 @@ describe('renders the locations table', () => {
 						<Routes>
 							<Route element={<Layout />}>
 								<Route index element={<LocationsView />} />
-								<Route path="/location" element={<LocationForm />} />
-								<Route path="/location/:id" element={<LocationForm />} />
+								<Route path="/location/create" element={<CreateLocation />} />
+								<Route path="/location/:id" element={<EditLocation />} />
 							</Route>
 						</Routes>
 					</SnackBarProvider>
@@ -76,8 +77,8 @@ describe('renders the locations table', () => {
 						<Routes>
 							<Route element={<Layout />}>
 								<Route index element={<LocationsView />} />
-								<Route path="/location" element={<LocationForm />} />
-								<Route path="/location/:id" element={<LocationForm />} />
+								<Route path="/location/create" element={<CreateLocation />} />
+								<Route path="/location/:id" element={<EditLocation />} />
 							</Route>
 						</Routes>
 					</SnackBarProvider>
