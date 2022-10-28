@@ -75,7 +75,7 @@ export function ChargerForm(props: IChargerForm): JSX.Element {
 						<option value="NOT_CONNECTED">NOT CONNECTED</option>
 						<option value="REMOVED">REMOVED</option>
 					</select>
-					<ErrorMessage errors={errors} name="status" />
+					<ErrorMessage errors={errors} name="status" render={({ message }) => <p className={styles.error}>{message}</p>} />
 				</div>
 
 				<div className={styles.typeField}>
@@ -86,13 +86,13 @@ export function ChargerForm(props: IChargerForm): JSX.Element {
 						<option value="T52">T52</option>
 						<option value="T53C">T53C</option>
 					</select>
-					<ErrorMessage errors={errors} name="type" />
+					<ErrorMessage errors={errors} name="type" render={({ message }) => <p className={styles.error}>{message}</p>} />
 				</div>
 
 				<div className={styles.serialNumberField}>
 					<label htmlFor="serialNumber">Serial Number</label>
 					<input id="serialNumber" type="text" placeholder="Serial Number" {...register('serialNumber', { required: 'Serial number is required' })} />
-					<ErrorMessage errors={errors} name="serialNumber" />
+					<ErrorMessage errors={errors} name="serialNumber" render={({ message }) => <p className={styles.error}>{message}</p>} />
 				</div>
 
 				<button ref={props.submitRef} type="submit" style={{ display: 'none' }} />

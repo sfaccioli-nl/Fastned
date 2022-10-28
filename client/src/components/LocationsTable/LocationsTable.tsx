@@ -73,7 +73,7 @@ export default function LocationsTable(props: ILocationsTableProps): JSX.Element
 		<div className={styles.container}>
 			<div className={styles.header}>
 				<p>Locations</p>
-				<Link to="/location">
+				<Link to="/location/create">
 					<Button className="primary">
 						<FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
 						Add Location
